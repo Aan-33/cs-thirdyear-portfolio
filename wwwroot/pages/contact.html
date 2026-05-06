@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — Reward for Justice</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="ph">
+  <div class="ph-inner">
+    <div class="breadcrumb"><a href="/">Home</a> &rsaquo; Contact Us</div>
+    <h1>Submit Information</h1>
+    <p>Have information about a wanted individual? Use this secure form. Anonymous submissions are fully protected.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <div class="contact-wrap">
+
+      <!-- Form -->
+      <div>
+        <div class="warn" style="margin-bottom:24px;">
+          <span style="font-size:16px;">🔒</span>
+          <div>Submissions are treated as strictly confidential. Providing false information is a criminal offense. If you are in immediate danger, contact local emergency services directly.</div>
+        </div>
+
+        <div class="fgroup">
+          <label class="form-lbl" for="name">Full Name <span style="color:var(--muted)">(optional — leave blank to submit anonymously)</span></label>
+          <input class="form-in" id="name" type="text" placeholder="Your name or leave blank for anonymous" />
+        </div>
+
+        <div class="form-row" style="margin-bottom:16px;">
+          <div class="fgroup" style="margin-bottom:0;">
+            <label class="form-lbl" for="email">Email Address <span style="color:var(--muted)">(optional)</span></label>
+            <input class="form-in" id="email" type="email" placeholder="your@email.com" />
+          </div>
+          <div class="fgroup" style="margin-bottom:0;">
+            <label class="form-lbl" for="subject">Subject / Case Reference</label>
+            <input class="form-in" id="subject" type="text" placeholder="e.g. RFJ-00001 sighting" />
+          </div>
+        </div>
+
+        <div class="fgroup">
+          <label class="form-lbl" for="message">Your Information *</label>
+          <textarea class="form-ta" id="message" placeholder="Describe what you know. Include dates, locations, and any relevant details."></textarea>
+        </div>
+
+        <div style="background:var(--bg2);border:1px solid var(--border);padding:14px 16px;margin-bottom:18px;font-size:12px;color:var(--muted);line-height:1.6;">
+          By submitting this form you confirm the information is accurate to the best of your knowledge. Submitting false information may carry legal consequences.
+        </div>
+
+        <button class="btn btn-gold" id="submit-btn" onclick="submitForm()" style="width:100%;justify-content:center;padding:14px;">
+          Submit Secure Report →
+        </button>
+      </div>
+
+      <!-- Side panel -->
+      <div>
+        <div class="side-panel" style="margin-bottom:1.25rem;">
+          <div class="side-title">Your Safety Matters</div>
+          <div class="side-item">
+            <div class="side-k">Anonymity</div>
+            <div class="side-v">Leave the name and email blank to submit anonymously. We will never share your identity without consent.</div>
+          </div>
+          <div class="side-item">
+            <div class="side-k">Rewards</div>
+            <div class="side-v">Tips leading to arrest or conviction may qualify for a financial reward. Eligibility reviewed per case.</div>
+          </div>
+          <div class="side-item">
+            <div class="side-k">Follow-up</div>
+            <div class="side-v">If email is provided, an agent may contact you within 72 hours. Anonymous tips cannot receive responses.</div>
+          </div>
+          <div class="side-item">
+            <div class="side-k">Emergency</div>
+            <div class="side-v">Do not use this form in an emergency. Call local emergency services immediately.</div>
+          </div>
+        </div>
+        <div class="side-panel">
+          <div class="side-title">Alternative Channels</div>
+          <div class="side-item">
+            <div class="side-k">Secure Line</div>
+            <div class="side-v" style="font-family:var(--mono);font-size:12px;">+1 (800) 000-0000</div>
+          </div>
+          <div class="side-item">
+            <div class="side-k">Encrypted Email</div>
+            <div class="side-v" style="font-family:var(--mono);font-size:12px;">tips@rewardforjustice.gov</div>
+          </div>
+          <div class="side-item">
+            <div class="side-k">Hours</div>
+            <div class="side-v">24 / 7 — tips reviewed by trained analysts.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div id="footer-placeholder"></div>
+<div class="toast" id="toast"><div class="toast-t" id="toast-t"></div><div class="toast-b" id="toast-b"></div></div>
+
+<script src="/js/shared.js"></script>
+<script>
+  renderNav('Contact');
+  renderFooter();
+
+  async function submitForm() {
+    const message = document.getElementById('message').value.trim();
+    if (!message) { showToast('Missing Info', 'Please enter your information before submitting.', true); return; }
+
+    const btn = document.getElementById('submit-btn');
+    btn.textContent = 'Transmitting...';
+    btn.disabled = true;
+
+    const payload = {
+      name:    document.getElementById('name').value.trim() || 'Anonymous',
+      email:   document.getElementById('email').value.trim(),
+      message,
+    };
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast('Received', data.text);
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('subject').value = '';
+        document.getElementById('message').value = '';
+      } else {
+        showToast('Error', data.error || 'Submission failed.', true);
+      }
+    } catch {
+      showToast('Network Error', 'Could not reach the server. Please try again.', true);
+    } finally {
+      btn.textContent = 'Submit Secure Report →';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

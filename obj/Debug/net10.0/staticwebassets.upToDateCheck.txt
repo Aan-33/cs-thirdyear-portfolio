@@ -1,0 +1,10 @@
+wwwroot\css\style.css
+wwwroot\index.html
+wwwroot\js\shared.js
+wwwroot\pages\contact.html
+wwwroot\pages\wanted.html
+C:\Users\User\Desktop\RewardForJustice_SimplestBackend\wwwroot\css\style.css
+C:\Users\User\Desktop\RewardForJustice_SimplestBackend\wwwroot\index.html
+C:\Users\User\Desktop\RewardForJustice_SimplestBackend\wwwroot\js\shared.js
+C:\Users\User\Desktop\RewardForJustice_SimplestBackend\wwwroot\pages\contact.html
+C:\Users\User\Desktop\RewardForJustice_SimplestBackend\wwwroot\pages\wanted.html

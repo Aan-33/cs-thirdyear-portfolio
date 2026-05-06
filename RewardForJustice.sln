@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11723.189 insiders
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RewardForJustice", "RewardForJustice.csproj", "{5ADAB300-3F92-CF90-5151-40E862BF5E25}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5ADAB300-3F92-CF90-5151-40E862BF5E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ADAB300-3F92-CF90-5151-40E862BF5E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ADAB300-3F92-CF90-5151-40E862BF5E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ADAB300-3F92-CF90-5151-40E862BF5E25}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49D1CBD1-DCAF-40A9-B7DC-F2A29650063C}
+	EndGlobalSection
+EndGlobal

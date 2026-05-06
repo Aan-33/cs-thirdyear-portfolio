@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wanted List — Reward for Justice</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="ph">
+  <div class="ph-inner">
+    <div class="breadcrumb"><a href="/">Home</a> &rsaquo; Wanted List</div>
+    <h1>Active Wanted Cases</h1>
+    <p>Substantial rewards are offered for information leading to the arrest or conviction of the individuals below.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <div class="warn">
+      <span style="font-size:18px;">⚠</span>
+      <div>All individuals are presumed innocent until proven guilty. <strong>Do not approach any listed person.</strong> Contact local law enforcement immediately if sighted.</div>
+    </div>
+
+    <div class="filters">
+      <button class="filter on" data-f="all">All</button>
+      <button class="filter" data-f="extreme">Extreme Danger</button>
+      <button class="filter" data-f="high">High Danger</button>
+      <div class="filter-info" id="count"></div>
+    </div>
+
+    <div class="grid" id="grid">
+      <div class="loading">Loading active cases</div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<div class="toast" id="toast"><div class="toast-t" id="toast-t"></div><div class="toast-b" id="toast-b"></div></div>
+
+<script src="/js/shared.js"></script>
+<script>
+  renderNav('Wanted');
+  renderFooter();
+
+  let all = [];
+
+  fetch('/api/wanted')
+    .then(r => r.json())
+    .then(data => {
+      all = data;
+      render(all);
+    })
+    .catch(() => {
+      document.getElementById('grid').innerHTML = '<p style="color:var(--muted);font-family:var(--mono);font-size:11px;">Unable to load records.</p>';
+    });
+
+  function render(list) {
+    document.getElementById('count').textContent = list.length + ' record(s)';
+    document.getElementById('grid').innerHTML = list.length
+      ? list.map(p => buildCard(p, true)).join('')
+      : '<p style="color:var(--muted);font-family:var(--mono);font-size:11px;">No records match filter.</p>';
+  }
+
+  document.querySelectorAll('.filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      const f = btn.dataset.f;
+      render(f === 'all' ? all : all.filter(p => p.danger.toLowerCase() === f));
+    });
+  });
+
+  function openModal(id) {
+    const p = all.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('modal-body').innerHTML = `
+      <div style="border-top:2px solid var(--red);padding:28px;">
+        <div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;">
+          <div style="width:80px;height:80px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:28px;color:var(--muted);flex-shrink:0;">${p.name.charAt(0)}</div>
+          <div style="flex:1;">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--red2);margin-bottom:4px;">⬤ WANTED</div>
+            <div style="font-family:var(--head);font-size:24px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;margin-bottom:2px;">${p.name}</div>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--muted);">Alias: "${p.alias}"</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;background:var(--bg2);border:1px solid var(--border);padding:16px;margin-bottom:20px;">
+          <div><div class="meta-k">Charges</div><div style="font-family:var(--head);font-size:13px;text-transform:uppercase;color:var(--text);">${p.crime}</div></div>
+          <div><div class="meta-k">Danger</div><div class="badge ${p.danger.toLowerCase()}">${p.danger}</div></div>
+          <div><div class="meta-k">Nationality</div><div class="meta-v">${p.nationality}</div></div>
+          <div><div class="meta-k">Last Seen</div><div class="meta-v">${p.lastSeen}</div></div>
+        </div>
+        <div style="margin-bottom:20px;">
+          <div class="meta-k" style="margin-bottom:6px;">Profile</div>
+          <div style="font-size:14px;color:var(--muted);line-height:1.7;">${p.description}</div>
+        </div>
+        <div style="background:rgba(200,146,42,.06);border:1px solid var(--muted);padding:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+          <div>
+            <div class="reward-lbl">Reward Offered</div>
+            <div class="reward-amt" style="font-size:28px;">$${p.reward.toLocaleString()}</div>
+          </div>
+          <a href="/pages/contact.html" class="btn btn-gold">Submit Information →</a>
+        </div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.06em;">CASE REF: RFJ-${String(p.id).padStart(5,'0')} · STATUS: ACTIVE</div>
+      </div>`;
+    document.getElementById('modal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal')) closeModal();
+  });
+</script>
+</body>
+</html>
